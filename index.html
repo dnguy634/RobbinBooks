@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RobbinBooks — +EV Sports Betting</title>
+  <meta name="description" content="RobbinBooks finds positive expected value (+EV) bets across sportsbooks and DFS platforms. Every pick tracked and verified on Pikkit." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- NAV -->
+  <header class="nav">
+    <div class="container nav-inner">
+      <a href="#" class="logo"><span class="logo-mark">RB</span>RobbinBooks</a>
+      <nav class="nav-links">
+        <a href="#ev">What is +EV</a>
+        <a href="#calculator">Calculator</a>
+        <a href="#founders">Founders</a>
+        <a href="#results">Results</a>
+        <a href="#testimonials">Members</a>
+      </nav>
+      <a class="btn btn-primary btn-sm" data-link="join" target="_blank" rel="noopener">Join VIP</a>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container">
+      <p class="eyebrow"><span class="dot"></span>Every bet tracked on Pikkit</p>
+      <h1>Stop guessing.<br /><span class="accent">Bet the math.</span></h1>
+      <p class="hero-sub">
+        RobbinBooks scans odds across sportsbooks and DFS platforms to find bets priced
+        better than they should be: positive expected value (+EV) opportunities with a measurable edge.
+      </p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" data-link="join" target="_blank" rel="noopener">Join RobbinBooks VIP</a>
+        <a class="btn btn-ghost" href="#results">View verified records ↓</a>
+      </div>
+      <div class="stats" id="stats"></div>
+    </div>
+  </section>
+
+  <!-- WHAT IS +EV -->
+  <section id="ev" class="section">
+    <div class="container">
+      <p class="section-label">01 · The edge</p>
+      <h2>What is +EV betting?</h2>
+      <p class="section-intro">
+        Most bettors pick who they think will win. +EV bettors ask a different question:
+        <em>is this price wrong?</em> Every set of odds implies a probability. When a sportsbook's
+        odds imply a lower chance than the real one, the bet is worth more than it costs, and over
+        enough bets that gap turns into profit.
+      </p>
+
+      <div class="cards-3">
+        <div class="card">
+          <span class="card-num">1</span>
+          <h3>Odds are probabilities</h3>
+          <p>+150 implies a 40% chance. −200 implies 66.7%. Books bake in extra margin (the "vig") so the implied odds on both sides add up to more than 100%.</p>
+        </div>
+        <div class="card">
+          <span class="card-num">2</span>
+          <h3>Find the fair line</h3>
+          <p>Sharp, high-limit markets are the most accurate prices out there. Strip out their vig and you get a fair, no-vig probability for each outcome.</p>
+        </div>
+        <div class="card">
+          <span class="card-num">3</span>
+          <h3>Bet the mispriced side</h3>
+          <p>When another book or DFS app offers better odds than the fair line, that's +EV. You won't win every bet, but you're getting paid more than the risk is worth.</p>
+        </div>
+      </div>
+
+      <div class="example">
+        <div>
+          <p class="example-label">Example</p>
+          <h3>The coin flip</h3>
+          <p>A fair coin lands heads 50% of the time, so fair odds are +100. If someone offers you <strong>+110</strong> on heads, you'll still lose about half your bets, but each win pays $110 while each loss costs only $100.</p>
+        </div>
+        <div class="example-math mono">
+          <div><span>Win 50% ×</span><span class="pos">+$110</span></div>
+          <div><span>Lose 50% ×</span><span class="neg">−$100</span></div>
+          <div class="example-total"><span>EV per $100 bet</span><span class="pos">+$5.00</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CALCULATOR + SIMULATION -->
+  <section id="calculator" class="section section-alt">
+    <div class="container">
+      <p class="section-label">02 · Try it</p>
+      <h2>+EV calculator</h2>
+      <p class="section-intro">Enter the odds a book is offering and the fair (no-vig) odds for the same outcome to see whether it's worth betting.</p>
+
+      <div class="dash">
+        <div class="panel">
+          <label class="field">
+            <span>Sportsbook odds (American)</span>
+            <input id="bookOdds" type="text" inputmode="numeric" value="+120" />
+          </label>
+          <label class="field">
+            <span>Fair odds (no-vig)</span>
+            <input id="fairOdds" type="text" inputmode="numeric" value="+100" />
+          </label>
+          <label class="field">
+            <span>Stake ($)</span>
+            <input id="stake" type="number" min="1" value="100" />
+          </label>
+
+          <div class="verdict" id="verdict"></div>
+
+          <dl class="readout mono">
+            <div><dt>Book implied prob.</dt><dd id="outImplied">—</dd></div>
+            <div><dt>Fair win prob.</dt><dd id="outFair">—</dd></div>
+            <div><dt>Edge</dt><dd id="outEdge">—</dd></div>
+            <div><dt>Expected profit / bet</dt><dd id="outEv">—</dd></div>
+          </dl>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <h3>Variance vs. edge</h3>
+              <p class="muted">5 simulated bettors placing 500 bets at the odds on the left</p>
+            </div>
+            <button class="btn btn-ghost btn-sm" id="rerun">Re-run</button>
+          </div>
+          <canvas id="sim" height="280"></canvas>
+          <p class="muted small">The dashed line is expected profit. Individual runs swing hard in the short term. A real edge only shows up over volume, which is why every pick is tracked.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="section">
+    <div class="container">
+      <p class="section-label">03 · The process</p>
+      <h2>How RobbinBooks works</h2>
+      <ol class="steps">
+        <li><strong>Scan</strong><span>Compare implied odds across sportsbooks and DFS platforms against sharp, no-vig fair lines.</span></li>
+        <li><strong>Filter</strong><span>Only plays with a measurable edge make the cut. No gut picks, no parlays for hype.</span></li>
+        <li><strong>Deliver</strong><span>Members get the play, the book, the odds, and the edge, fast enough to bet before the line moves.</span></li>
+        <li><strong>Track</strong><span>Every result is logged on Pikkit. Wins and losses, nothing hidden.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- FOUNDERS -->
+  <section id="founders" class="section section-alt">
+    <div class="container">
+      <p class="section-label">04 · The team</p>
+      <h2>Meet the founders</h2>
+      <p class="section-intro">
+        RobbinBooks was founded by Daniel, Tyler, and Jayden. We built our track record betting +EV first,
+        with every result tracked publicly on Pikkit, then started RobbinBooks to give members that same edge
+        against sportsbooks and DFS platforms. No hype and no gut picks: just the math, and the receipts to back it up.
+      </p>
+      <div class="founders" id="founderList"></div>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section id="results" class="section">
+    <div class="container">
+      <p class="section-label">05 · Receipts</p>
+      <div class="section-head">
+        <h2>Results</h2>
+        <div class="pikkit-links" id="pikkitLinks"></div>
+      </div>
+      <div class="gallery" id="gallery"></div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section id="testimonials" class="section section-alt">
+    <div class="container">
+      <p class="section-label">06 · Members</p>
+      <h2>What members say</h2>
+      <div class="carousel is-static" id="carousel">
+        <div class="carousel-track" id="testimonialList"></div>
+      </div>
+      <div class="carousel-controls" id="carouselControls" hidden>
+        <button class="carousel-btn" id="prevQuote" aria-label="Previous testimonial">←</button>
+        <button class="carousel-btn" id="nextQuote" aria-label="Next testimonial">→</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section cta-section">
+    <div class="container cta">
+      <h2>Bet with an edge.</h2>
+      <p>Join 100+ members getting +EV plays with a public, verified track record.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" data-link="join" target="_blank" rel="noopener">Join RobbinBooks VIP</a>
+        <a class="btn btn-ghost" href="#results">Check the records ↑</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <p class="disclaimer">
+        For entertainment and informational purposes only. Not financial advice. Past results do not guarantee
+        future performance; +EV betting still loses money over short stretches. Must be 21+ and located where sports
+        betting is legal. If you or someone you know has a gambling problem, call <strong>1-800-GAMBLER</strong>.
+      </p>
+      <p class="muted small">© <span id="year"></span> RobbinBooks</p>
+    </div>
+  </footer>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox" hidden>
+    <button class="lightbox-close" aria-label="Close">×</button>
+    <img id="lightboxImg" alt="" />
+    <p id="lightboxCaption"></p>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
