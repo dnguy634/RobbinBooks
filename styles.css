@@ -256,7 +256,6 @@ img { max-width: 100%; display: block; }
 .founder-link:hover { text-decoration: underline; }
 
 /* ── Gallery ── */
-.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-top: 40px; }
 .shot {
   margin: 0;
   background: var(--panel);
@@ -284,7 +283,7 @@ img { max-width: 100%; display: block; }
 .placeholder small { font-size: 0.78rem; opacity: 0.7; }
 
 /* ── Testimonials ── */
-.carousel { overflow: hidden; margin-top: 40px; }
+.carousel { overflow: hidden; margin-top: 40px; padding-top: 4px; } /* room for the screenshot hover lift */
 .carousel-track { display: flex; gap: 16px; transition: transform 0.6s ease; }
 .carousel-track > * { flex: 0 0 calc((100% - 32px) / 3); }
 .carousel.is-static .carousel-track { flex-wrap: wrap; }

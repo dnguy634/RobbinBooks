@@ -156,7 +156,7 @@
       <p class="section-label">04 · The team</p>
       <h2>Meet the founders</h2>
       <p class="section-intro">
-        RobbinBooks was founded by Daniel, Tyler, and Jayden. We built our track record betting +EV first,
+        RobbinBooks was founded in early 2026 by Tyler, Daniel, and Jayden. We built our track record betting +EV first,
         with every result tracked publicly on Pikkit, then started RobbinBooks to give members that same edge
         against sportsbooks and DFS platforms. No hype and no gut picks: just the math, and the receipts to back it up.
       </p>
@@ -172,7 +172,13 @@
         <h2>Results</h2>
         <div class="pikkit-links" id="pikkitLinks"></div>
       </div>
-      <div class="gallery" id="gallery"></div>
+      <div class="carousel is-static" id="galleryCarousel">
+        <div class="carousel-track" id="gallery"></div>
+      </div>
+      <div class="carousel-controls" id="galleryControls" hidden>
+        <button class="carousel-btn" data-dir="-1" aria-label="Previous screenshot">←</button>
+        <button class="carousel-btn" data-dir="1" aria-label="Next screenshot">→</button>
+      </div>
     </div>
   </section>
 
@@ -181,12 +187,12 @@
     <div class="container">
       <p class="section-label">06 · Members</p>
       <h2>What members say</h2>
-      <div class="carousel is-static" id="carousel">
-        <div class="carousel-track" id="testimonialList"></div>
+      <div class="carousel is-static" id="quoteCarousel">
+        <div class="carousel-track"></div>
       </div>
-      <div class="carousel-controls" id="carouselControls" hidden>
-        <button class="carousel-btn" id="prevQuote" aria-label="Previous testimonial">←</button>
-        <button class="carousel-btn" id="nextQuote" aria-label="Next testimonial">→</button>
+      <div class="carousel-controls" id="quoteControls" hidden>
+        <button class="carousel-btn" data-dir="-1" aria-label="Previous testimonial">←</button>
+        <button class="carousel-btn" data-dir="1" aria-label="Next testimonial">→</button>
       </div>
     </div>
   </section>

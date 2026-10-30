@@ -30,24 +30,81 @@ document.getElementById('founderList').innerHTML = FOUNDERS.map(f => {
     </div>`;
 }).join('');
 
+// ── CAROUSEL ──
+// Turns a .carousel block into a looping slider that moves one card at a time.
+// Cards are rendered twice; after passing the last real card it jumps back to
+// the matching card in the first copy with no animation, so the loop is seamless.
+// Rotates only when there are more items than fit in one row on desktop (3).
+function setupCarousel(root, controls, cardsHtml, count) {
+  const track = root.querySelector('.carousel-track');
+  const rotating = count > 3;
+  track.innerHTML = rotating ? cardsHtml + cardsHtml : cardsHtml;
+  if (!rotating) return;
+
+  let index = 0;
+  let timer = null;
+  let paused = false;
+
+  function moveTo(i, animate = true) {
+    index = i;
+    const step = track.children[0].getBoundingClientRect().width + (parseFloat(getComputedStyle(track).gap) || 0);
+    track.style.transition = animate ? '' : 'none';
+    track.style.transform = `translateX(${-i * step}px)`;
+    if (!animate) track.offsetWidth; // apply the jump before the next animated move
+  }
+
+  function step(dir) {
+    if (index + dir > count) moveTo(index - count, false);
+    if (index + dir < 0) moveTo(index + count, false);
+    moveTo(index + dir);
+  }
+
+  function restart() {
+    clearInterval(timer);
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    timer = setInterval(() => {
+      if (!paused && !document.hidden) step(1);
+    }, 4000);
+  }
+
+  root.classList.remove('is-static');
+  controls.hidden = false;
+  track.addEventListener('transitionend', e => {
+    if (e.target === track && index >= count) moveTo(index - count, false);
+  });
+  controls.addEventListener('click', e => {
+    const btn = e.target.closest('[data-dir]');
+    if (!btn) return;
+    step(Number(btn.dataset.dir));
+    restart();
+  });
+  root.addEventListener('mouseenter', () => (paused = true));
+  root.addEventListener('mouseleave', () => (paused = false));
+  window.addEventListener('resize', () => moveTo(index, false));
+  restart();
+}
+
+const placeholders = (label, hint) =>
+  [1, 2, 3].map(() => `<div class="placeholder"><span>${label}</span><small>${hint}</small></div>`).join('');
+
 // ── SCREENSHOTS ──
-const gallery = document.getElementById('gallery');
-if (SCREENSHOTS.length) {
-  gallery.innerHTML = SCREENSHOTS.map(
-    (s, i) => `
+setupCarousel(
+  document.getElementById('galleryCarousel'),
+  document.getElementById('galleryControls'),
+  SCREENSHOTS.length
+    ? SCREENSHOTS.map(
+        (s, i) => `
       <figure class="shot" data-index="${i}">
         <img src="${escapeHtml(s.src)}" alt="${escapeHtml(s.caption || 'RobbinBooks result')}" loading="lazy" />
         ${s.caption ? `<figcaption>${escapeHtml(s.caption)}</figcaption>` : ''}
       </figure>`
-  ).join('');
-} else {
-  gallery.innerHTML = [1, 2, 3]
-    .map(() => `<div class="placeholder"><span>Screenshot</span><small>Add images in data.js</small></div>`)
-    .join('');
-}
+      ).join('')
+    : placeholders('Screenshot', 'Add images in data.js'),
+  SCREENSHOTS.length
+);
 
 const lightbox = document.getElementById('lightbox');
-gallery.addEventListener('click', e => {
+document.getElementById('gallery').addEventListener('click', e => {
   const fig = e.target.closest('.shot');
   if (!fig) return;
   const s = SCREENSHOTS[fig.dataset.index];
@@ -63,14 +120,12 @@ document.addEventListener('keydown', e => {
 });
 
 // ── TESTIMONIALS ──
-const testimonialList = document.getElementById('testimonialList');
-const quoteCount = TESTIMONIALS.length;
-// Rotate only when there are more quotes than fit in one row on desktop.
-const rotating = quoteCount > 3;
-
-if (quoteCount) {
-  const cards = TESTIMONIALS.map(
-    t => `
+setupCarousel(
+  document.getElementById('quoteCarousel'),
+  document.getElementById('quoteControls'),
+  TESTIMONIALS.length
+    ? TESTIMONIALS.map(
+        t => `
       <blockquote class="quote">
         <p>“${escapeHtml(t.text)}”</p>
         <footer>
@@ -78,63 +133,10 @@ if (quoteCount) {
           ${t.result ? `<span class="quote-result mono">${escapeHtml(t.result)}</span>` : ''}
         </footer>
       </blockquote>`
-  ).join('');
-  // A second copy follows the first so the loop never shows an empty gap.
-  testimonialList.innerHTML = rotating ? cards + cards : cards;
-} else {
-  testimonialList.innerHTML = [1, 2, 3]
-    .map(() => `<div class="placeholder"><span>Testimonial</span><small>Add member quotes in data.js</small></div>`)
-    .join('');
-}
-
-// ── TESTIMONIAL CAROUSEL ──
-// Slides one card at a time. After passing the last real card, it jumps back
-// to the matching card in the first copy with no animation, so the loop is seamless.
-let quoteIndex = 0;
-let rotateTimer = null;
-let paused = false;
-
-function moveTo(i, animate = true) {
-  quoteIndex = i;
-  const step = testimonialList.children[0].getBoundingClientRect().width + (parseFloat(getComputedStyle(testimonialList).gap) || 0);
-  testimonialList.style.transition = animate ? '' : 'none';
-  testimonialList.style.transform = `translateX(${-i * step}px)`;
-  if (!animate) testimonialList.offsetWidth; // apply the jump before the next animated move
-}
-
-function nextQuote() {
-  if (quoteIndex >= quoteCount) moveTo(quoteIndex - quoteCount, false);
-  moveTo(quoteIndex + 1);
-}
-
-function prevQuote() {
-  if (quoteIndex <= 0) moveTo(quoteIndex + quoteCount, false);
-  moveTo(quoteIndex - 1);
-}
-
-function restartRotation() {
-  clearInterval(rotateTimer);
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  rotateTimer = setInterval(() => {
-    if (!paused && !document.hidden) nextQuote();
-  }, 4000);
-}
-
-if (rotating) {
-  const carousel = document.getElementById('carousel');
-  carousel.classList.remove('is-static');
-  document.getElementById('carouselControls').hidden = false;
-
-  testimonialList.addEventListener('transitionend', () => {
-    if (quoteIndex >= quoteCount) moveTo(quoteIndex - quoteCount, false);
-  });
-  document.getElementById('nextQuote').addEventListener('click', () => { nextQuote(); restartRotation(); });
-  document.getElementById('prevQuote').addEventListener('click', () => { prevQuote(); restartRotation(); });
-  carousel.addEventListener('mouseenter', () => (paused = true));
-  carousel.addEventListener('mouseleave', () => (paused = false));
-  window.addEventListener('resize', () => moveTo(quoteIndex, false));
-  restartRotation();
-}
+      ).join('')
+    : placeholders('Testimonial', 'Add member quotes in data.js'),
+  TESTIMONIALS.length
+);
 
 // ── +EV MATH ──
 // American odds → decimal payout (stake included). Returns null for invalid input.
